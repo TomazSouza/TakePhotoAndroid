@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -16,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.app.ActivityCompat;
 
+import com.example.takephotoandroid.emulate.FakeCollection;
+import com.example.takephotoandroid.entity.Item;
 import com.example.takephotoandroid.exception.ActivityFragmentNullPointerException;
 import com.example.takephotoandroid.exception.CallbackNullPointerException;
 
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private AppCompatImageView imageView;
 
     private ImageCapture imageCapture;
+    private static CustomBottomSheetDialogFragment mCustomBottomSheetDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +51,16 @@ public class MainActivity extends AppCompatActivity {
         Button mBtnTakePhoto = findViewById(R.id.btnTakePhotoId);
 
         mBtnTakePhoto.setOnClickListener(view -> {
-            try {
-                imageCapture.startCamera(this,  imageUri -> imageView.setImageURI(imageUri));
-            } catch (ActivityFragmentNullPointerException e) {
-                e.printStackTrace();
-            } catch (CallbackNullPointerException e) {
-                e.printStackTrace();
-            }
+            Bundle b = new Bundle();
+            b.putParcelableArrayList(Item.ITEMS_KEY, FakeCollection.getItems());
+
+            mCustomBottomSheetDialogFragment = new CustomBottomSheetDialogFragment();
+            CustomBottomSheetDialogFragment.Callback callback = sourceUri -> imageView.setImageURI(sourceUri);
+
+            mCustomBottomSheetDialogFragment.registerCallback(callback);
+            mCustomBottomSheetDialogFragment.setArguments(b);
+            mCustomBottomSheetDialogFragment.show(getSupportFragmentManager(),
+                    CustomBottomSheetDialogFragment.FRAGMENT_KEY);
         });
 
     }

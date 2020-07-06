@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static android.app.Activity.RESULT_OK;
+
 public class ImageCapture {
 
     private static Callback mCallback;
@@ -34,7 +36,7 @@ public class ImageCapture {
     private static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 1001;
 
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID+ ".provider";
-
+    private static final int PICK_IMAGE_REQUEST_CODE = 1000;
     private static final String PHOTOS = "photos";
     public static File output = null;
     private static Uri outputUri;
@@ -67,6 +69,38 @@ public class ImageCapture {
         Intent intent = getIntent(fragment.getActivity());
 
         fragment.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+    }
+
+    public void startPickImage(@NonNull Activity activity, @NonNull Callback callback)
+            throws ActivityFragmentNullPointerException, CallbackNullPointerException {
+
+        if (activity == null)
+            throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nullo");
+
+        if (callback == null)
+            throw new CallbackNullPointerException(new StringBuilder().append("Callback ").append(ImageCapture.class.getSimpleName()).append(" não poder ser nulo").toString());
+
+        mCallback = callback;
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        activity.startActivityForResult(intent, PICK_IMAGE_REQUEST_CODE);
+    }
+
+    public void startPickImage(@NonNull Fragment fragment, @NonNull Callback callback)
+            throws ActivityFragmentNullPointerException, CallbackNullPointerException {
+
+            if (fragment == null || fragment.getActivity() == null)
+                throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nullo");
+
+            if (callback == null)
+                throw new CallbackNullPointerException(new StringBuilder().append("Callback ").append(ImageCapture.class.getSimpleName()).append(" não poder ser nulo").toString());
+
+            mCallback = callback;
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        fragment.startActivityForResult(intent, PICK_IMAGE_REQUEST_CODE);
     }
 
     public Intent getIntent(Activity activity) {
@@ -127,6 +161,12 @@ public class ImageCapture {
                 if (fragment != null) {
                     fragment.startActivityForResult(i, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
                 } else {
+                    activity.startActivityForResult(i, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+                }
+            } else if (requestCode == PICK_IMAGE_REQUEST_CODE) {
+                if (resultCode == RESULT_OK) {
+                    Intent i = CropImage.activity(data.getData())
+                            .getIntent(activity);
                     activity.startActivityForResult(i, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
                 }
             }
