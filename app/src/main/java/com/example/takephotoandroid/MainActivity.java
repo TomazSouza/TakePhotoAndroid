@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -20,7 +19,6 @@ import androidx.core.app.ActivityCompat;
 import com.example.takephotoandroid.emulate.FakeCollection;
 import com.example.takephotoandroid.entity.Item;
 import com.example.takephotoandroid.exception.ActivityFragmentNullPointerException;
-import com.example.takephotoandroid.exception.CallbackNullPointerException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,11 +26,20 @@ public class MainActivity extends AppCompatActivity {
     private static final int ACESSAR_MEDIA = 1002;
     private static final int ACESSAR_CAMERA = 1003;
 
-    private String permissaoLerEscrever[] = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    private String permissaoCamera[] = {Manifest.permission.CAMERA};
-    private String permissaoAcessarMedia[] = {Manifest.permission.ACCESS_MEDIA_LOCATION};
+    private String permissaoLerEscrever[] = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
-    private AppCompatImageView imageView;
+    private String permissaoCamera[] = {
+            Manifest.permission.CAMERA
+    };
+
+    private String permissaoAcessarMedia[] = {
+            Manifest.permission.ACCESS_MEDIA_LOCATION
+    };
+
+    private AppCompatImageView mImageView;
 
     private ImageCapture imageCapture;
     private static CustomBottomSheetDialogFragment mCustomBottomSheetDialogFragment;
@@ -44,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         permissaoLerEscrever();
 
-        imageView = findViewById(R.id.imageView);
+        mImageView = findViewById(R.id.imageView);
 
         imageCapture = new ImageCapture();
 
@@ -55,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             b.putParcelableArrayList(Item.ITEMS_KEY, FakeCollection.getItems());
 
             mCustomBottomSheetDialogFragment = new CustomBottomSheetDialogFragment();
-            CustomBottomSheetDialogFragment.Callback callback = sourceUri -> imageView.setImageURI(sourceUri);
+            CustomBottomSheetDialogFragment.Callback callback = sourceUri -> mImageView.setImageURI(sourceUri);
 
             mCustomBottomSheetDialogFragment.registerCallback(callback);
             mCustomBottomSheetDialogFragment.setArguments(b);
