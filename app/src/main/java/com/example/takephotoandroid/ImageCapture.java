@@ -81,7 +81,7 @@ public class ImageCapture {
             throws ActivityFragmentNullPointerException, CallbackNullPointerException {
 
         if (activity == null)
-            throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nullo");
+            throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nulo");
 
         if (callback == null)
             throw new CallbackNullPointerException(new StringBuilder().
@@ -101,7 +101,7 @@ public class ImageCapture {
             throws ActivityFragmentNullPointerException, CallbackNullPointerException {
 
             if (fragment == null || fragment.getActivity() == null)
-                throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nullo");
+                throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nulo");
 
             if (callback == null)
                 throw new CallbackNullPointerException(new StringBuilder()
@@ -156,7 +156,7 @@ public class ImageCapture {
             Context context;
 
             if (activity == null && fragment == null)
-                throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nullo");
+                throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nulo");
 
             if (activity != null) {
                 context = activity;

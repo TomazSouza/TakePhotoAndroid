@@ -76,15 +76,11 @@ public class MainActivity extends AppCompatActivity {
 
             mCustomBottomSheetDialogFragment = new CustomBottomSheetDialogFragment();
             CustomBottomSheetDialogFragment.Callback callback = sourceUri -> {
-                try {
-                   // mImageView.setImageBitmap(getBitmapFromUri(uri, MainActivity.this));
-                    File file = new File(getRealPathFromURI(sourceUri));
-                    uri = Uri.fromFile(file);
-                    Bitmap bitmap = getBitmapFromUri(uri, MainActivity.this);
-                    mImageView.setImageBitmap(bitmap);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                try {
+                    mImageView.setImageURI(sourceUri);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
             };
 
             mCustomBottomSheetDialogFragment.registerCallback(callback);
