@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
@@ -20,15 +21,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.app.ActivityCompat;
 
-import com.bumptech.glide.Glide;
 import com.example.takephotoandroid.emulate.FakeCollection;
 import com.example.takephotoandroid.entity.Item;
 import com.example.takephotoandroid.exception.ActivityFragmentNullPointerException;
 
-import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 
@@ -137,31 +135,34 @@ public class MainActivity extends AppCompatActivity {
 
         if (ActivityCompat.checkSelfPermission(this, permissaoLerEscrever[0]) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissaoLerEscrever[0])) {
-                showDialog();
+                showCustomDialog(permissaoLerEscrever, READ_EXTERNAL_STORAGE_REQUEST_CODE);
             } else {
                 ActivityCompat.requestPermissions(this, permissaoLerEscrever, READ_EXTERNAL_STORAGE_REQUEST_CODE);
             }
         } else {
-            accesarMedia();
+         acessarCamera();
         }
     }
 
     private void acessarCamera() {
         if (ActivityCompat.checkSelfPermission(this, permissaoCamera[0]) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissaoCamera[0])) {
-                showDialog();
+                showCustomDialog(permissaoCamera, ACESSAR_CAMERA);
             } else {
                 ActivityCompat.requestPermissions(this, permissaoCamera, ACESSAR_CAMERA);
             }
         } else {
-            permissaoLerEscrever();
+            boolean checkVersion = Build.VERSION.SDK_INT >=  Build.VERSION_CODES.P;
+            if (checkVersion) {
+                accesarMedia();
+            }
         }
     }
 
     private void accesarMedia() {
         if (ActivityCompat.checkSelfPermission(this, permissaoAcessarMedia[0]) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissaoAcessarMedia[0])) {
-                showDialog();
+                showCustomDialog(permissaoCamera, ACESSAR_MEDIA);
             } else {
                 ActivityCompat.requestPermissions(this, permissaoAcessarMedia, ACESSAR_MEDIA);
             }
@@ -215,13 +216,13 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void showDialog() {
+    private void showCustomDialog(String[] permissaoLerEscrever, int readExternalStorageRequestCode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Ler imagem da galeria?");
         builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                ActivityCompat.requestPermissions(MainActivity.this, mPermissions, READ_EXTERNAL_STORAGE_REQUEST_CODE);
+                ActivityCompat.requestPermissions(MainActivity.this, permissaoLerEscrever, readExternalStorageRequestCode);
                 dialog.dismiss();
             }
         }).setNegativeButton("Não", new DialogInterface.OnClickListener() {

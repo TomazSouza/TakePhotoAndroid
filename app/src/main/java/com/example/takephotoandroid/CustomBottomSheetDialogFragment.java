@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,7 +43,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.bottom_sheet_dialog, container);
+        View view = inflater.inflate(R.layout.bottom_sheet_dialog_new, container);
 
         if (getArguments() == null) {
             return view;
@@ -54,11 +55,14 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
         ItemAdapter adapter = new ItemAdapter(getActivity(), items);
 
-        GridView gridView = view.findViewById(R.id.gv_items);
-        gridView.setAdapter(adapter);
-        gridView.setNumColumns(2);
+        ListView listView = (ListView) view.findViewById(R.id.grid_view_id);
+        listView.setAdapter( adapter );
 
-        gridView.setOnItemClickListener((parent, view1, position, id) -> {
+//        GridView gridView = view.findViewById(R.id.gv_items);
+//        gridView.setAdapter(adapter);
+//        gridView.setNumColumns(2);
+
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
             if (position == 0) {
                 try {
                     imageCapture.startCamera(CustomBottomSheetDialogFragment.this, imageCallback);

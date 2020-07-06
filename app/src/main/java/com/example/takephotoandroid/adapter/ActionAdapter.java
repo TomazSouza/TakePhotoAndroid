@@ -31,8 +31,8 @@ public class ActionAdapter extends Adapter {
             view = inflater.inflate(R.layout.item_action, viewGroup, false);
             view.setTag(holder);
 
-            holder.icon = (ImageView) view.findViewById(R.id.iv_icon);
-            holder.label = (TextView) view.findViewById(R.id.tv_label);
+            holder.icon = view.findViewById(R.id.iv_icon);
+            holder.label =  view.findViewById(R.id.tv_label);
         } else {
             holder = (ViewHolder) view.getTag();
         }

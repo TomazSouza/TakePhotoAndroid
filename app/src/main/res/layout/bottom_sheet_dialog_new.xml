@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_bottom_sheet_id"
+    android:elevation="3dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp"
+    android:layout_gravity="bottom|center"
+    android:background="@android:color/white">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_view_titulo"
+        android:layout_width="wrap_content"
+        android:textSize="16sp"
+        android:paddingLeft="18dp"
+        android:paddingRight="16dp"
+        android:text="Selecione uma opção"
+        android:layout_height="wrap_content"
+        android:paddingStart="18dp"
+        android:paddingEnd="16dp" />
+
+    <ListView
+        android:id="@+id/grid_view_id"
+        android:layout_below="@id/text_view_titulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        tools:listitem="@layout/adapter_bottom_sheet_item" />
+
+</RelativeLayout>

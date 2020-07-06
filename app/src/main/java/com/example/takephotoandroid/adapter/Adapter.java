@@ -6,6 +6,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.example.takephotoandroid.entity.Item;
 
 import java.util.List;
@@ -32,8 +35,8 @@ public abstract class Adapter extends BaseAdapter {
     }
 
     static class ViewHolder {
-        ImageView icon;
-        TextView label;
+        AppCompatImageView icon;
+        AppCompatTextView label;
     }
     
 }
