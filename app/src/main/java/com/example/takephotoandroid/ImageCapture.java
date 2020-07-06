@@ -31,15 +31,15 @@ public class ImageCapture {
 
     private static Callback mCallback;
 
-    public static final int REQUEST_IMAGE_CAPTURE = 100;
-
-    private static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 1001;
-
-    public static final String AUTHORITY = BuildConfig.APPLICATION_ID+ ".provider";
+    public static final int CAPTURE_IMAGE_REQUEST_CODE = 100;
     private static final int PICK_IMAGE_REQUEST_CODE = 1000;
-    private static final String PHOTOS = "photos";
+
     public static File output = null;
     private static Uri outputUri;
+
+    private static final String PHOTOS = "photos";
+
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID+ ".provider";
 
     public void startCamera(@NonNull Activity activity, @NonNull Callback callback)
             throws ActivityFragmentNullPointerException, CallbackNullPointerException {
@@ -48,12 +48,15 @@ public class ImageCapture {
             throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nullo");
 
         if (callback == null)
-            throw new CallbackNullPointerException(new StringBuilder().append("Callback ").append(ImageCapture.class.getSimpleName()).append(" não poder ser nulo").toString());
+            throw new CallbackNullPointerException(new StringBuilder()
+                    .append("Callback ")
+                    .append(ImageCapture.class.getSimpleName())
+                    .append(" não pode ser nulo").toString());
 
         mCallback = callback;
         Intent intent = getIntent(activity);
 
-        activity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        activity.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE);
     }
 
     public void startCamera(@NonNull Fragment fragment, @NonNull Callback callback)
@@ -63,12 +66,15 @@ public class ImageCapture {
             throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nullo");
 
         if (callback == null)
-            throw new CallbackNullPointerException(new StringBuilder().append("Callback ").append(ImageCapture.class.getSimpleName()).append(" não poder ser nulo").toString());
+            throw new CallbackNullPointerException(new StringBuilder()
+                    .append("Callback ")
+                    .append(ImageCapture.class.getSimpleName())
+                    .append(" não poder ser nulo").toString());
 
         mCallback = callback;
         Intent intent = getIntent(fragment.getActivity());
 
-        fragment.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        fragment.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE);
     }
 
     public void startPickImage(@NonNull Activity activity, @NonNull Callback callback)
@@ -78,7 +84,11 @@ public class ImageCapture {
             throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nullo");
 
         if (callback == null)
-            throw new CallbackNullPointerException(new StringBuilder().append("Callback ").append(ImageCapture.class.getSimpleName()).append(" não poder ser nulo").toString());
+            throw new CallbackNullPointerException(new StringBuilder().
+                    append("Callback ")
+                    .append(ImageCapture.class.getSimpleName())
+                    .append(" não poder ser nulo")
+                    .toString());
 
         mCallback = callback;
 
@@ -94,7 +104,11 @@ public class ImageCapture {
                 throw new ActivityFragmentNullPointerException("Fragmento e activity não pode ser nullo");
 
             if (callback == null)
-                throw new CallbackNullPointerException(new StringBuilder().append("Callback ").append(ImageCapture.class.getSimpleName()).append(" não poder ser nulo").toString());
+                throw new CallbackNullPointerException(new StringBuilder()
+                        .append("Callback ")
+                        .append(ImageCapture.class.getSimpleName())
+                        .append(" não poder ser nulo")
+                        .toString());
 
             mCallback = callback;
 
@@ -156,7 +170,7 @@ public class ImageCapture {
                     Uri resultUri = result.getUri();
                     mCallback.imageUri(resultUri);
                 }
-            } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            } else if (requestCode == CAPTURE_IMAGE_REQUEST_CODE) {
                 Intent i = CropImage.activity(outputUri).getIntent(context);
                 if (fragment != null) {
                     fragment.startActivityForResult(i, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -166,8 +180,12 @@ public class ImageCapture {
             } else if (requestCode == PICK_IMAGE_REQUEST_CODE) {
                 if (resultCode == RESULT_OK) {
                     Intent i = CropImage.activity(data.getData())
-                            .getIntent(activity);
-                    activity.startActivityForResult(i, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+                            .getIntent(context);
+                    if (fragment != null) {
+                        fragment.startActivityForResult(i, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+                    } else {
+                        activity.startActivityForResult(i, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+                    }
                 }
             }
         }
@@ -176,7 +194,11 @@ public class ImageCapture {
     private Uri getOutputMediaFile(Activity activity) {
         String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        String fileName = new StringBuilder().append(imageFileName).append(".jpg").toString();
+
+        String fileName = new StringBuilder()
+                .append(imageFileName)
+                .append(".jpg")
+                .toString();
 
         File filesDir = new File(activity.getFilesDir(), PHOTOS);
         output = new File(filesDir, fileName);

@@ -6,8 +6,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,9 +23,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.app.ActivityCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.takephotoandroid.emulate.FakeCollection;
 import com.example.takephotoandroid.entity.Item;
 import com.example.takephotoandroid.exception.ActivityFragmentNullPointerException;
+
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,10 +51,11 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_MEDIA_LOCATION
     };
 
-    private AppCompatImageView mImageView;
+    private ImageView mImageView;
 
     private ImageCapture imageCapture;
     private static CustomBottomSheetDialogFragment mCustomBottomSheetDialogFragment;
+    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +75,17 @@ public class MainActivity extends AppCompatActivity {
             b.putParcelableArrayList(Item.ITEMS_KEY, FakeCollection.getItems());
 
             mCustomBottomSheetDialogFragment = new CustomBottomSheetDialogFragment();
-            CustomBottomSheetDialogFragment.Callback callback = sourceUri -> mImageView.setImageURI(sourceUri);
+            CustomBottomSheetDialogFragment.Callback callback = sourceUri -> {
+                try {
+                   // mImageView.setImageBitmap(getBitmapFromUri(uri, MainActivity.this));
+                    File file = new File(getRealPathFromURI(sourceUri));
+                    uri = Uri.fromFile(file);
+                    Bitmap bitmap = getBitmapFromUri(uri, MainActivity.this);
+                    mImageView.setImageBitmap(bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            };
 
             mCustomBottomSheetDialogFragment.registerCallback(callback);
             mCustomBottomSheetDialogFragment.setArguments(b);
@@ -70,6 +93,38 @@ public class MainActivity extends AppCompatActivity {
                     CustomBottomSheetDialogFragment.FRAGMENT_KEY);
         });
 
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+
+        Cursor cursor = MainActivity.this
+                .getContentResolver()
+                .query(contentURI, null, null, null, null);
+        if (cursor == null) {
+            // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private Bitmap getBitmapFromUri(Uri uri, Context context) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+                context.getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
     }
 
     @Override

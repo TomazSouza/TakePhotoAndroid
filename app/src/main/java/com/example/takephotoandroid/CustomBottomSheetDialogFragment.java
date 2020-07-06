@@ -84,7 +84,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         try {
-            imageCapture.onActivityResult(getActivity(), requestCode, resultCode, data);
+            imageCapture.onActivityResult(CustomBottomSheetDialogFragment.this, requestCode, resultCode, data);
         } catch (ActivityFragmentNullPointerException e) {
             e.printStackTrace();
         }
