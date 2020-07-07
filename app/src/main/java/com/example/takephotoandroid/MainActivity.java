@@ -26,6 +26,10 @@ import androidx.core.app.ActivityCompat;
 import com.example.takephotoandroid.emulate.FakeCollection;
 import com.example.takephotoandroid.entity.Item;
 import com.example.takephotoandroid.exception.ActivityFragmentNullPointerException;
+import com.example.takephotoandroid.exception.CallbackNullPointerException;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageCapture imageCapture;
     private static CustomBottomSheetDialogFragment mCustomBottomSheetDialogFragment;
     private Uri uri;
+    private ImageCapture mImageCapture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,27 +69,66 @@ public class MainActivity extends AppCompatActivity {
 
         mImageView = findViewById(R.id.imageView);
 
-        imageCapture = new ImageCapture();
+        mImageCapture = new ImageCapture();
 
         Button mBtnTakePhoto = findViewById(R.id.btnTakePhotoId);
 
         mBtnTakePhoto.setOnClickListener(view -> {
+
+//            try {
+//                mImageCapture.startCamera(this, new ImageCapture.Callback() {
+//                    @Override
+//                    public void onPickImage(Uri imageUri) {
+//                        Uri testWithDebug = imageUri;
+//                    }
+//
+//                    @Override
+//                    void imageUri(Uri imageUri) {
+//                        Uri testWithDebug = imageUri;
+//                        mImageView.setImageURI(imageUri);
+//                    }
+//
+//                    @Override
+//                    public void cropConfig(CropImage.ActivityBuilder builder) {
+//                        builder.setMultiTouchEnabled(false)
+//                                .setCropShape(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ?
+//                                        CropImageView.CropShape.RECTANGLE : CropImageView.CropShape.OVAL)
+//                                .setRequestedSize(640, 640)
+//                                .setAspectRatio(5, 5);
+//                    }
+//                });
+//            } catch (ActivityFragmentNullPointerException e) {
+//                e.printStackTrace();
+//            } catch (CallbackNullPointerException e) {
+//                e.printStackTrace();
+//            }
+
             Bundle b = new Bundle();
             b.putParcelableArrayList(Item.ITEMS_KEY, FakeCollection.getItems());
 
             mCustomBottomSheetDialogFragment = new CustomBottomSheetDialogFragment();
-            CustomBottomSheetDialogFragment.Callback callback = sourceUri -> {
-//                try {
-                    mImageView.setImageURI(sourceUri);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
+            CustomBottomSheetDialogFragment.Callback callback = new CustomBottomSheetDialogFragment.Callback() {
+                @Override
+                void onCropImage(Uri imageUri) {
+                    mImageView.setImageURI(imageUri);
+                }
+
+                @Override
+                void cropConfig(CropImage.ActivityBuilder builder) {
+                    builder.setMultiTouchEnabled(false)
+                            .setCropShape(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ?
+                                    CropImageView.CropShape.RECTANGLE : CropImageView.CropShape.OVAL)
+                            .setRequestedSize(640, 640)
+                            .setAspectRatio(5, 5);
+                }
             };
 
             mCustomBottomSheetDialogFragment.registerCallback(callback);
             mCustomBottomSheetDialogFragment.setArguments(b);
             mCustomBottomSheetDialogFragment.show(getSupportFragmentManager(),
                     CustomBottomSheetDialogFragment.FRAGMENT_KEY);
+
+
         });
 
     }
@@ -123,11 +167,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        try {
-            imageCapture.onActivityResult(this, requestCode, resultCode, data);
-        } catch (ActivityFragmentNullPointerException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            mImageCapture.onActivityResult(this, requestCode, resultCode, data);
+//        } catch (ActivityFragmentNullPointerException e) {
+//            e.printStackTrace();
+//        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 

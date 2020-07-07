@@ -2,6 +2,7 @@ package com.example.takephotoandroid;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,9 @@ import com.example.takephotoandroid.entity.Item;
 import com.example.takephotoandroid.exception.ActivityFragmentNullPointerException;
 import com.example.takephotoandroid.exception.CallbackNullPointerException;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
 
 import java.util.ArrayList;
 
@@ -34,7 +38,21 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment {
     ImageCapture.Callback imageCallback = new ImageCapture.Callback() {
         @Override
         public void imageUri(Uri imageUri) {
-            mCallback.onCropImage(imageUri);
+            if (mCallback != null)
+                mCallback.onCropImage(imageUri);
+        }
+
+        @Override
+        public void onPickImage(Uri imageUri) {
+            if (mCallback != null)
+                mCallback.onCropImage(imageUri);
+        }
+
+        @Override
+        public void cropConfig(CropImage.ActivityBuilder builder) {
+            if (mCallback != null) {
+              mCallback.cropConfig(builder);
+            }
         }
     };
 
@@ -100,8 +118,10 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment {
         }
     }
 
-    public interface Callback {
-        void onCropImage(Uri position);
+    public static abstract class Callback {
+        abstract void onCropImage(Uri imageUri);
+
+        abstract void cropConfig(CropImage.ActivityBuilder builder);
     }
 
     @Override

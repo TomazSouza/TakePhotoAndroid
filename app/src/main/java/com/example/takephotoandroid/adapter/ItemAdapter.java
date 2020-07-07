@@ -28,11 +28,11 @@ public class ItemAdapter extends Adapter {
 
         if (view == null) {
             holder = new ViewHolder();
-            view = inflater.inflate(R.layout.item_grid, viewGroup, false);
+            view = inflater.inflate(R.layout.adapter_bottom_sheet_item, viewGroup, false);
             view.setTag(holder);
 
-            holder.icon =  view.findViewById(R.id.iv_icon);
-            holder.label = view.findViewById(R.id.tv_label);
+            holder.icon =  view.findViewById(R.id.image_icon_id);
+            holder.label = view.findViewById(R.id.label_id);
         } else {
             holder = (ViewHolder) view.getTag();
         }
